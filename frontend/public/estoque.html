@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Estoque</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container mt-5">
+    <a href="home.html" class="btn btn-secondary mb-3">Voltar</a>
+    <h1>Controle de Estoque</h1>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Descrição</th>
+                <th>Quantidade Atual</th>
+                <th>Preço Unitário</th>
+                <th>Data Atualização</th>
+            </tr>
+        </thead>
+        <tbody id="tabelaEstoque">
+            </tbody>
+    </table>
+</div>
+
+<script>
+    async function carregarEstoque() {
+        const tabela = document.getElementById('tabelaEstoque');
+        try {
+            // Certifique-se de que esta rota exista no seu backend
+            const resposta = await fetch('http://localhost:3000/api/estoque');
+            const itens = await resposta.json();
+
+            tabela.innerHTML = itens.map(item => `
+                <tr>
+                    <td>${item.id}</td>
+                    <td>${item.descricao}</td>
+                    <td>${item.quantidade_atual}</td>
+                    <td>R$ ${parseFloat(item.preco_unitario).toFixed(2)}</td>
+                    <td>${new Date(item.data_atualizacao).toLocaleDateString()}</td>
+                </tr>
+            `).join('');
+        } catch (erro) {
+            console.error('Erro ao carregar estoque:', erro);
+            alert('Não foi possível carregar o estoque.');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', carregarEstoque);
+</script>
+</body>
+</html>
